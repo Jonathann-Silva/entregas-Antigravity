@@ -1,0 +1,29 @@
+﻿src/app/admin/deliveries/page.tsx(11,25): error TS2724: '"@/lib/types"' has no exported member named 'AdminDeliveryStatus'. Did you mean 'DeliveryStatus'?
+src/app/admin/finance/[clientId]/page.tsx(59,61): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/admin/finance/[clientId]/page.tsx(127,108): error TS7053: Element implicitly has an 'any' type because expression of type 'PaymentMethod' can't be used to index type '{ credit: Element; pix: Element; cash: Element; }'.
+  Property 'collect' does not exist on type '{ credit: Element; pix: Element; cash: Element; }'.
+src/app/admin/finance/page.tsx(37,67): error TS2352: Conversion of type '{ id: string; uid: string; }' to type 'UserProfile' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ id: string; uid: string; }' is missing the following properties from type 'UserProfile': role, createdAt
+src/app/admin/notifications/page.tsx(17,7): error TS2741: Property 'message' is missing in type '{ package: JSX.Element; wallet: JSX.Element; alert: JSX.Element; }' but required in type 'Record<"message" | "package" | "wallet" | "alert", ReactNode>'.
+src/app/admin/notifications/page.tsx(23,7): error TS2741: Property 'message' is missing in type '{ package: string; wallet: string; alert: string; }' but required in type 'Record<"message" | "package" | "wallet" | "alert", string>'.
+src/app/client/settings/page.tsx(218,47): error TS2339: Property 'fcmToken' does not exist on type 'UserProfile'.
+src/app/courier/profile/page.tsx(96,47): error TS2339: Property 'fcmToken' does not exist on type 'UserProfile'.
+src/components/notifications.tsx(135,114): error TS7053: Element implicitly has an 'any' type because expression of type '"message" | "package" | "wallet" | "alert"' can't be used to index type '{ package: string; wallet: string; alert: string; }'.
+  Property 'message' does not exist on type '{ package: string; wallet: string; alert: string; }'.
+src/components/notifications.tsx(136,30): error TS7053: Element implicitly has an 'any' type because expression of type '"message" | "package" | "wallet" | "alert"' can't be used to index type '{ package: Element; wallet: Element; alert: Element; }'.
+  Property 'message' does not exist on type '{ package: Element; wallet: Element; alert: Element; }'.
+src/components/ui/calendar.tsx(57,9): error TS2353: Object literal may only specify known properties, and 'IconLeft' does not exist in type 'Partial<CustomComponents>'.
+src/components/ui/calendar.tsx(57,22): error TS7031: Binding element 'className' implicitly has an 'any' type.
+src/components/ui/calendar.tsx(60,23): error TS7031: Binding element 'className' implicitly has an 'any' type.
+src/firebase/auth/use-user.tsx(45,30): error TS2352: Conversion of type '{ uid: string; id: string; }' to type 'UserProfile' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ uid: string; id: string; }' is missing the following properties from type 'UserProfile': role, createdAt
+src/lib/data.ts(1,25): error TS2305: Module '"./types"' has no exported member 'User'.
+src/lib/data.ts(1,31): error TS2305: Module '"./types"' has no exported member 'Client'.
+src/lib/data.ts(1,39): error TS2305: Module '"./types"' has no exported member 'Courier'.
+src/lib/data.ts(1,48): error TS2305: Module '"./types"' has no exported member 'Financials'.
+src/lib/data.ts(1,60): error TS2305: Module '"./types"' has no exported member 'HistoryReport'.
+src/lib/data.ts(1,75): error TS2305: Module '"./types"' has no exported member 'AdminDelivery'.
+src/lib/data.ts(17,5): error TS2353: Object literal may only specify known properties, and 'timestamp' does not exist in type 'Delivery'.
+src/lib/data.ts(25,5): error TS2353: Object literal may only specify known properties, and 'timestamp' does not exist in type 'Delivery'.
+src/services/push-notification.ts(3,21): error TS7016: Could not find a declaration file for module 'web-push'. 'C:/Users/Jonathan Silva/Desktop/Lucas Expresso/lucasexpresso-main/node_modules/web-push/src/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/web-push` if it exists or add a new declaration (.d.ts) file containing `declare module 'web-push';`

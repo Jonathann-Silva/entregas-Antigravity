@@ -1,0 +1,66 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuth() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) 
+                     && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // --- Collection Rules ---
+
+    // USERS
+    match /users/{userId} {
+      allow get: if isAuth();
+      allow list: if isAuth();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // CHATS
+    match /chats/{chatId} {
+      // Regra de isolamento: admin vê tudo, usuário só vê chat que contém seu ID
+      allow read, write: if isAdmin() || (isAuth() && chatId == 'admin_' + request.auth.uid);
+      
+      match /messages/{messageId} {
+        allow read, write: if isAdmin() || (isAuth() && chatId == 'admin_' + request.auth.uid);
+      }
+    }
+
+    // DELIVERIES
+    match /deliveries/{deliveryId} {
+      allow create: if isAuth() && request.resource.data.clientId == request.auth.uid;
+      allow update: if isAdmin() || (isAuth() && (resource.data.clientId == request.auth.uid || resource.data.courierId == request.auth.uid));
+      allow get: if isAdmin() || (isAuth() && (resource.data.clientId == request.auth.uid || resource.data.courierId == request.auth.uid));
+      allow list: if isAuth();
+      allow delete: if false;
+    }
+
+    // NOTIFICATIONS
+    match /notifications/{notificationId} {
+      allow create: if isAuth();
+      allow get, list, update: if isOwner(resource.data.userId) || isAdmin();
+      allow delete: if false;
+    }
+
+    // STATUS & SETTINGS
+    match /status/{statusId} {
+      allow get: if true;
+      allow write: if isAdmin();
+    }
+    match /settings/{settingId} {
+      allow get: if isAdmin() || (isAuth() && settingId == 'rules');
+      allow write: if isAdmin();
+    }
+  }
+}

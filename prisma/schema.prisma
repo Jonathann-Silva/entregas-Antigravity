@@ -1,0 +1,136 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+
+
+// =======================
+// MODELS
+// =======================
+
+model User {
+  id                      String    @id @default(cuid())
+  email                   String?   @unique
+  password                String?
+  displayName             String?
+  photoURL                String?
+  role                    String      @default("client")
+  address                 String?
+  userType                String?
+  cnpj                    String?
+  pushSubscription        String?   // JSON string
+  createdAt               DateTime  @default(now())
+  
+  // Courier specific rates & status
+  deliveryRate            Float?
+  condoRateGoldemItalian  Float?
+  condoRateMonteRey       Float?
+  rateAricanduva          Float?
+  rateApucarana           Float?
+  rateSabaudia            Float?
+  rateRolandia            Float?
+  rateLondrina            Float?
+  status                  String?   @default("offline")
+  
+  // Last Location stored as flat fields
+  lastLocationLat         Float?
+  lastLocationLng         Float?
+  lastLocationUpdatedAt   DateTime?
+
+  // Relations
+  deliveriesAsClient      Delivery[] @relation("ClientDeliveries")
+  deliveriesAsCourier     Delivery[] @relation("CourierDeliveries")
+  notifications           Notification[]
+  chatMessages            ChatMessage[]
+  
+  // In a real chat system, users participate in rooms.
+  // For this simple admin-user chat, we'll link ChatRooms where the user is a participant.
+  chatRooms               ChatRoomParticipant[]
+}
+
+model Delivery {
+  id              String         @id @default(cuid())
+  pickup          String
+  dropoff         String
+  price           Float
+  status          String @default("pending")
+  
+  // Relations
+  clientId        String
+  client          User           @relation("ClientDeliveries", fields: [clientId], references: [id])
+  courierId       String?
+  courier         User?          @relation("CourierDeliveries", fields: [courierId], references: [id])
+
+  createdAt       DateTime       @default(now())
+  acceptedAt      DateTime?
+  finishedAt      DateTime?
+  observations    String?
+  paid            Boolean        @default(false)
+  paidByClient    Boolean        @default(false)
+  paymentMethod   String
+  cancelRequested Boolean        @default(false)
+}
+
+model ChatRoom {
+  id               String    @id @default(cuid())
+  lastMessage      String?
+  lastMessageAt    DateTime?
+  unreadCountAdmin Int       @default(0)
+  unreadCountUser  Int       @default(0)
+  userName         String?   // Cache for display
+  userRole         String?     // Cache for display
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  participants     ChatRoomParticipant[]
+  messages         ChatMessage[]
+}
+
+model ChatRoomParticipant {
+  roomId    String
+  userId    String
+  room      ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([roomId, userId])
+}
+
+model ChatMessage {
+  id         String    @id @default(cuid())
+  text       String
+  createdAt  DateTime  @default(now())
+  read       Boolean   @default(false)
+
+  senderId   String
+  sender     User      @relation(fields: [senderId], references: [id])
+  
+  roomId     String
+  room       ChatRoom  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  title       String
+  description String
+  createdAt   DateTime         @default(now())
+  read        Boolean          @default(false)
+  icon        String @default("alert")
+  link        String?
+
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AppStatus {
+  id          String   @id @default("singleton")
+  adminOnline Boolean  @default(false)
+  lastUpdated DateTime @default(now())
+}

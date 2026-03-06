@@ -1,0 +1,96 @@
+
+{
+  "entities": {
+    "userProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's profile in the system.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "role": { "type": "string", "enum": ["admin", "client", "courier"] },
+        "userType": { "type": "string" },
+        "cnpj": { "type": "string" },
+        "address": { "type": "string" },
+        "fcmToken": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "deliveryRate": { "type": "number" },
+        "status": { "type": "string", "enum": ["online", "offline"] }
+      },
+      "required": ["uid", "role", "createdAt"]
+    },
+    "chatMessage": {
+      "title": "Chat Message",
+      "description": "A single message in a chat room.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["senderId", "text", "createdAt"]
+    },
+    "chatRoom": {
+      "title": "Chat Room",
+      "description": "Metadata for a chat conversation.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Format: admin_{userId}" },
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "lastMessage": { "type": "string" },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "unreadCountAdmin": { "type": "number" },
+        "unreadCountUser": { "type": "number" }
+      }
+    },
+    "delivery": {
+      "title": "Delivery",
+      "description": "Represents a delivery request.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "pickup": { "type": "string" },
+        "dropoff": { "type": "string" },
+        "price": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "in-progress", "finished", "refused"] },
+        "clientId": { "type": "string" },
+        "courierId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "observations": { "type": "string" },
+        "paid": { "type": "boolean" },
+        "cancelRequested": { "type": "boolean" }
+      },
+      "required": ["pickup", "dropoff", "price", "status", "clientId", "createdAt"]
+    },
+    "notification": {
+      "title": "Notification",
+      "description": "Represents a user notification.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" },
+        "icon": { "type": "string", "enum": ["package", "wallet", "alert", "message"] }
+      },
+      "required": ["userId", "title", "description", "createdAt", "read", "icon"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous", "emailPassword"]
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": { "$ref": "#/entities/userProfile" }, "description": "Stores user profiles." },
+    "/deliveries/{deliveryId}": { "schema": { "$ref": "#/entities/delivery" }, "description": "Stores delivery requests." },
+    "/notifications/{notificationId}": { "schema": { "$ref": "#/entities/notification" }, "description": "Stores notifications." },
+    "/chats/{chatId}": { "schema": { "$ref": "#/entities/chatRoom" }, "description": "Chat sessions metadata." },
+    "/chats/{chatId}/messages/{messageId}": { "schema": { "$ref": "#/entities/chatMessage" }, "description": "Individual chat messages." }
+  }
+}
